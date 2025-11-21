@@ -4,7 +4,8 @@ using System.Collections.Generic;
 public enum ModType 
 { 
     Add ,        // 加法修饰
-    Multiply ,   // 乘法修饰
+    Sub ,  // 剑法修饰 
+    Mul ,   // 乘法修饰
     Override     // 覆盖修饰
 }
 

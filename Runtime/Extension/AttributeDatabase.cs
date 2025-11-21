@@ -483,7 +483,7 @@ public static class AttributeDatabase
         return type switch
         {
             ModType.Add => "A",
-            ModType.Multiply => "M",
+            ModType.Mul => "M",
             ModType.Override => "O",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
@@ -493,7 +493,7 @@ public static class AttributeDatabase
             return type switch
             {
                 "A" => ModType.Add,
-                "M" => ModType.Multiply,
+                "M" => ModType.Mul,
                 "O" => ModType.Override,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };

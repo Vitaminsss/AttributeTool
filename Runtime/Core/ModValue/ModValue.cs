@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-
 /// <summary>
 /// 可修饰的数值类型，支持动态添加/移除数值修饰符组
 /// </summary>
@@ -14,7 +12,6 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     private T _cached;    // 缓存计算结果（可空）
     private bool _dirty;  // 标记是否需要重新计算
     private bool _disposed; // 标记是否已被释放
-    private int _updatingFlag; // 0=未更新, 1=更新中
     
     private readonly SafeEvent<(double Old, double New)> _valueChangedEvent = new();
     private readonly SafeEvent _dirtyEvent = new();
@@ -31,10 +28,10 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
         get
         {
             if (!_dirty) return _cached;
-            _dirtyEvent?.Invoke();
             var oldValue = _cached;
             _cached = Calculate(); // 重新计算数值
             _dirty = false;
+            _dirtyEvent?.Invoke();
 
             if (!EqualityComparer<T>.Default.Equals(oldValue, _cached)) 
                 Invoke(Convert.ToDouble(oldValue), Convert.ToDouble(_cached)); // 调用属性变化方法
@@ -180,17 +177,8 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     public void MarkDirty()
     {
         // 如果已经在更新中，则跳过
-        if (Interlocked.CompareExchange(ref _updatingFlag, 1, 0) != 0) return;
-        try
-        {
-            if (_dirty) return;
-            _dirty = true;
-            _ = Value; // 触发重新计算（会间接触发通知）
-        }
-        finally
-        {
-            Interlocked.Exchange(ref _updatingFlag, 0); // 重置标记
-        }
+        if (_dirty) return;
+        _dirty = true;
     }
     
     /// <summary>
@@ -203,7 +191,6 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
         // 释放所有托管资源
         _valueChangedEvent.Dispose();
         AllGroups.Clear();
-
         _disposed = true;
     }
     

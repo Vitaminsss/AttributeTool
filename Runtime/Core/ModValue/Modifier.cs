@@ -59,7 +59,8 @@ public class Modifier
         return _type switch
         {
             ModType.Add => baseValue + v,
-            ModType.Multiply => baseValue * v,
+            ModType.Sub => baseValue - v,
+            ModType.Mul => baseValue * v,
             ModType.Override => v,
             _ => throw new ArgumentOutOfRangeException()
         };

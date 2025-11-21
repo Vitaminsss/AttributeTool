@@ -207,39 +207,38 @@ public abstract class AttributeEnv : IDisposable
             if (fieldType == typeof(ExString))
             { _allExString[field.Name] = value as ExString ?? new ExString(); }
             
-            // ========== ① 子环境 AttributeEnv ==========
-            if (typeof(AttributeEnv).IsAssignableFrom(fieldType) && fieldType != typeof(AttributeEnv))
-            {
-                if (value is not AttributeEnv childEnv)
-                    throw new InvalidOperationException($"子环境 '{field.Name}' 必须在 InitValue() 中初始化");
-                _allField[field.Name] = childEnv;
-                continue;
-            }
-
-            // ========== ② 子环境数组 ==========
-            if (fieldType.IsArray)
-            {
-                var elementType = fieldType.GetElementType(); 
-                if (typeof(AttributeEnv).IsAssignableFrom(elementType))
-                {
-                    if (value is not Array arr)
-                        throw new InvalidOperationException($"数组子环境 '{field.Name}' 必须初始化");
-
-                    _allField[field.Name] = arr;
-                    continue;
-                }
-            } 
-
-            // ========== ③ List<T> 子环境 ==========
-            if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
-            {
-                var elementType = fieldType.GetGenericArguments()[0];
-                if (typeof(AttributeEnv).IsAssignableFrom(elementType))
-                {
-                    _allField[field.Name] = value ?? throw new InvalidOperationException($"列表子环境 '{field.Name}' 必须初始化"); // value 是 List<AttributeEnv>
-                }
-            }
-
+            // // ========== ① 子环境 AttributeEnv ==========
+            // if (typeof(AttributeEnv).IsAssignableFrom(fieldType) && fieldType != typeof(AttributeEnv))
+            // {
+            //     if (value is not AttributeEnv childEnv)
+            //         throw new InvalidOperationException($"子环境 '{field.Name}' 必须在 InitValue() 中初始化");
+            //     _allField[field.Name] = childEnv;
+            //     continue;
+            // }
+            //
+            // // ========== ② 子环境数组 ==========
+            // if (fieldType.IsArray)
+            // {
+            //     var elementType = fieldType.GetElementType(); 
+            //     if (typeof(AttributeEnv).IsAssignableFrom(elementType))
+            //     {
+            //         if (value is not Array arr)
+            //             throw new InvalidOperationException($"数组子环境 '{field.Name}' 必须初始化");
+            //
+            //         _allField[field.Name] = arr;
+            //         continue;
+            //     }
+            // } 
+            //
+            // // ========== ③ List<T> 子环境 ==========
+            // if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+            // {
+            //     var elementType = fieldType.GetGenericArguments()[0];
+            //     if (typeof(AttributeEnv).IsAssignableFrom(elementType))
+            //     {
+            //         _allField[field.Name] = value ?? throw new InvalidOperationException($"列表子环境 '{field.Name}' 必须初始化"); // value 是 List<AttributeEnv>
+            //     }
+            // }
         }
         _initialized = true;
     }
