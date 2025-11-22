@@ -13,8 +13,8 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     private bool _dirty;  // 标记是否需要重新计算
     private bool _disposed; // 标记是否已被释放
     
-    private readonly SafeEvent<(double Old, double New)> _valueChangedEvent = new();
-    private readonly SafeEvent _dirtyEvent = new();
+    private SafeEvent<(double Old, double New)> _valueChangedEvent;
+    private SafeEvent _dirtyEvent;
     
     // TODO: 改成适配SafeEvent更加安全
     public event Action OnDirty; 
@@ -64,20 +64,27 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     } 
 
     /* ------------------------------------ 数值变化监听 --------------------------------------*/
-    
+
     /// <summary>
     /// 添加数值变化监听事件
     /// </summary>
-    public void AddListener(Action<double, double> handler) =>
+    public void AddListener(Action<double, double> handler)
+    {
+        _valueChangedEvent ??= new SafeEvent<(double Old, double New)>();
         _valueChangedEvent.Add(x => handler(x.Old, x.New));
+    }
     /// <summary>
     /// 移除数值变化监听事件
     /// </summary>
     public void RemoveListener(Action<double, double> handler) =>
         _valueChangedEvent.Remove(x => handler(x.Old, x.New));
     
-    public void AddListener(Action handler) =>
+    public void AddListener(Action handler)
+    {
+        _dirtyEvent ??= new SafeEvent();
         _dirtyEvent.Add(handler);
+    }
+
     public void RemoveListener(Action handler) =>
         _dirtyEvent.Remove(handler);
 
