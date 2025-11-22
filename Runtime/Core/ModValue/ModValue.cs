@@ -176,7 +176,7 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     // 事件触发逻辑 // BUG: 这里会不知为何多次Invoke所以有空要修
     private void Invoke(double oldVal, double newVal)
     {
-        _valueChangedEvent.Invoke((oldVal, newVal)); 
+        _valueChangedEvent?.Invoke((oldVal, newVal)); 
         OnDirty?.Invoke();
     }
     
