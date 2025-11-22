@@ -18,7 +18,7 @@ public static class AttributeDatabase
         if (root == null) throw new ArgumentNullException(nameof(root));
         if (string.IsNullOrEmpty(data)) return false;
         
-        root.BeforeLoad(); // 加载前方法
+        root.BeforeLoad(data); // 加载前方法
         var IsDataArea = false;
         var lines = data.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
         foreach (var raw in lines)
@@ -51,7 +51,7 @@ public static class AttributeDatabase
             try { root.AfterLoadPerLines(line); }
             catch { /* 忽略错误 */ }
         }
-        try { root.AfterLoad(); }
+        try { root.AfterLoad(data); }
         catch { /* 忽略错误 */ }
         return true;
     }

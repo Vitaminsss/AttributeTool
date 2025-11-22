@@ -24,9 +24,9 @@ public abstract class AttributeEnv : IDisposable
     protected virtual void BindMap(){} // 用于初始化Bind方法
     protected abstract void InitValue(); // 用于初始化数据
     
-    public virtual void BeforeLoad(){} // 用于反序列化解析前
+    public virtual void BeforeLoad(string data){} // 用于反序列化解析前
     public virtual void AfterLoadPerLines(string line){} // 用于反序列化解析每行之后
-    public virtual void AfterLoad(){} // 用于反序列化解析完成
+    public virtual void AfterLoad(string data){} // 用于反序列化解析完成
     protected AttributeEnv()
     {
         InitValue();
