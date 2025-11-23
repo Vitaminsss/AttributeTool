@@ -169,8 +169,9 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
             { recovery = value; }
         }
     }
-    public float Percent => Math.GreaterThan(Max, default) ? Math.ToFloat(Math.Divide(current, Max)) : 0f;
-
+    
+    private float Percent => Math.GreaterThan(Max, default) ? Math.ToFloat(Math.Divide(current, Max)) : 0f;
+    public float GetPercent() => Percent;
     public void MarkDirty()
     { OnDirty?.Invoke(); }
 

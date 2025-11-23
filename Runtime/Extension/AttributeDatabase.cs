@@ -1,18 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 public static class AttributeDatabase
 {
-
     public static string Serialize(this AttributeEnv env)
     {
         var sb = new StringBuilder(2048);
         SerializeInternal(env, sb, env.EnvID);  // 根环境 section 名就是类名
         return sb.ToString();
     }
-    
     public static bool LoadFrom(this AttributeEnv root, string data)
     {
         if (root == null) throw new ArgumentNullException(nameof(root));
@@ -111,7 +110,6 @@ public static class AttributeDatabase
             .Append('\n');
     }
 
-
     public static bool DesModValue(this AttributeEnv env,string data)
     {
         if (string.IsNullOrEmpty(data)) return false;
@@ -129,7 +127,6 @@ public static class AttributeDatabase
         { DeserializeVp(env, line); }
         return true;
     }
-    
     
     // TODO：后期需要在这几个泛型类的地方做泛用工具类目前的重复度过高
     private static bool DeserializeMod(AttributeEnv env, string line)
@@ -380,7 +377,6 @@ public static class AttributeDatabase
             _ => value.ToString() // 其他类型保持原样
         };
     }
-
     private static char GetTypeChar(object value)
     {
         char typeChar = 'D';
@@ -405,5 +401,28 @@ public static class AttributeDatabase
         var Env = new T();
         Env.LoadFrom(data);
         return Env;
+    }
+
+    public static string Serialize<T>(this IEnumerable<T> envList) where T : AttributeEnv
+    {
+        using var enumerator = envList.GetEnumerator();
+        if (!enumerator.MoveNext()) return string.Empty; // 空集合
+
+        var sb = new StringBuilder();
+        sb.Append(enumerator.Current.Serialize());
+    
+        while (enumerator.MoveNext())
+        {
+            sb.AppendLine("&&");
+            sb.Append(enumerator.Current.Serialize());
+        }
+        sb.AppendLine(); // 最后统一换行
+        return sb.ToString();
+    }
+    
+    public static IEnumerable<T> LoadEnvs<T>(this string path) where T : AttributeEnv, new()
+    {
+        var datas = path.Split("&&");
+        return datas.Select(data => data.LoadEnv<T>()).ToList();
     }
 }
