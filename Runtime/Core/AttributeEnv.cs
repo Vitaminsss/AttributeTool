@@ -90,6 +90,8 @@ public abstract class AttributeEnv : IDisposable
     
     public ModValue<T> GetModValue<T>(string propertyName) where T : struct
     {
+        if(string.IsNullOrEmpty(propertyName)) throw new ArgumentNullException(nameof(propertyName));
+        
         if (!_allField.TryGetValue(propertyName, out var fieldObj))
             throw new KeyNotFoundException($"Property '{propertyName}' not found");
         
@@ -100,6 +102,7 @@ public abstract class AttributeEnv : IDisposable
     }
     public ValuePair<T> GetValuePair<T>(string propertyName)where T : struct
     {
+        if(string.IsNullOrEmpty(propertyName)) throw new ArgumentNullException(nameof(propertyName));
         if (!_allField.TryGetValue(propertyName, out var fieldObj))
             throw new KeyNotFoundException($"属性 '{propertyName}' 没找到");
         
