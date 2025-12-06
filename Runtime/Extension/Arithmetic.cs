@@ -15,6 +15,8 @@ public interface IArithmetic<T> where T : struct
     T Clamp(T value, T min, T max);
     bool LessThan(T a, T b);
     bool GreaterThan(T a, T b);
+    bool GreaterEThan(T a, T b);
+    
     bool Equal(T a, T b);
     float ToFloat(T value);
 }
@@ -55,6 +57,8 @@ public struct IntArithmetic : IArithmetic<int>
     public int Clamp(int value, int min, int max) => Math.Clamp(value, min, max);
     public bool LessThan(int a, int b) => a < b;
     public bool GreaterThan(int a, int b) => a > b;
+    public bool GreaterEThan(int a, int b) => a >= b;
+
     public bool Equal(int a, int b) => a == b;
     public float ToFloat(int value) => value;
 }
@@ -70,6 +74,7 @@ public struct FloatArithmetic : IArithmetic<float>
     public float Clamp(float value, float min, float max) => Mathf.Clamp(value, min, max);
     public bool LessThan(float a, float b) => a < b;
     public bool GreaterThan(float a, float b) => a > b;
+    public bool GreaterEThan(float a, float b) => a >= b;
     public bool Equal(float a, float b) => Mathf.Approximately(a, b);
     public float ToFloat(float value) => value;
 }

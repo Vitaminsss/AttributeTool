@@ -254,7 +254,7 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
     #region 辅助方法
 
     public bool IsEnough(T  amount)
-    => Math.GreaterThan(Current, amount); 
+    => Math.GreaterEThan(Current, amount); 
 
     public T GetRemaining()
     => Math.Subtract(Max, Current);
