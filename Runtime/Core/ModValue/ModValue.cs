@@ -197,7 +197,7 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
 
         // 释放所有托管资源
         _valueChangedEvent?.Dispose();
-        AllGroups.Clear();
+        AllGroups?.Clear();
         _disposed = true;
     }
     

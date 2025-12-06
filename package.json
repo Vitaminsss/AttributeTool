@@ -1,7 +1,10 @@
 {
-  "name": "com.rain.attributetool",
+  "name": "com.rainy.attributetool",
   "version": "1.0.0",
-  "displayName": "RainAttrTool",
-  "description": "PrivateUse",
-  "author": {  "name": "Rain" }
+  "displayName": "Rainy的属性工具包",
+  "description": "仅供私人与学习使用",
+  "unity": "2021.3", 
+  "author": {
+    "name": "Rain"
+  }
 }
