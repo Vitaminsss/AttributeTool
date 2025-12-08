@@ -49,6 +49,12 @@ public sealed class ExString : IDescriptionR, IDisposable
     public void AddListener(Action<string, string> handler) => 
         _onValueChanged.Add(h => handler(h.Old, h.New));
     
+    public void AddListener(Action handler) => 
+        _onValueChanged.Add(_ => handler());
+
+    public void RemoveListener(Action handler) => 
+        _onValueChanged.Add(_ => handler());
+    
     public void RemoveListener(Action<string, string> handler) => 
         _onValueChanged.Remove(h => handler(h.Old, h.New));
 

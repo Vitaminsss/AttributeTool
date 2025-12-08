@@ -9,8 +9,8 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
     private ModValue<T> BindMinRef,BindMaxRef,BindRecRef;
     
     private readonly object _bindingLock = new();
-
-    private readonly SafeEvent<(double Old, double New)> _valueChangedEvent = new();
+    
+    private readonly SafeEvent<(T Old, T New)> _valueChangedEvent = new();
     private readonly SafeEvent<T> _onReachMaxEvent = new();
     private readonly SafeEvent _dirtyEvent = new();
     public string Description { get; set; }
@@ -88,7 +88,7 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
 
     private void Invoke(T oldVal, T newVal)
     {
-        _valueChangedEvent.Invoke((Convert.ToDouble(oldVal), Convert.ToDouble(newVal)));
+        _valueChangedEvent.Invoke((oldVal, newVal));
         _dirtyEvent.Invoke(); // 通知监听器变化
         OnDirty?.Invoke(); // 用于当被用于ModValue动态修改值触发
         
@@ -212,12 +212,12 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
     /// <summary>
     /// 监听 Current 值的变化。支持 lambda/方法组；
     /// </summary>
-    public void AddListener(Action<double,double> handler) => _valueChangedEvent.Add(h => handler(h.Old, h.New));
+    public void AddListener(Action<T,T> handler) => _valueChangedEvent.Add(h => handler(h.Old, h.New));
  
     /// <summary>
     /// 移除监听 —— Lambada函数无法被移除
     /// </summary>
-    public void RemoveListener(Action<double,double> handler) => _valueChangedEvent.Remove(h => handler(h.Old, h.New));
+    public void RemoveListener(Action<T,T> handler) => _valueChangedEvent.Remove(h => handler(h.Old, h.New));
     
     public void AddListener(Action handler) =>
         _dirtyEvent.Add(handler);
@@ -229,8 +229,8 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
     public void AddReachMaxListener(Action<T> handler)  => _onReachMaxEvent .Add(handler);
     public void RemoveReachMaxListener(Action<T> handler)=> _onReachMaxEvent .Remove(handler);
     
-    public static ValuePair<T> operator +(ValuePair<T> vp, Action<double,double> handler) { vp.AddListener(handler); return vp; }
-    public static ValuePair<T> operator -(ValuePair<T> vp, Action<double,double> handler) { vp.RemoveListener(handler); return vp; }
+    public static ValuePair<T> operator +(ValuePair<T> vp, Action<T,T> handler) { vp.AddListener(handler); return vp; }
+    public static ValuePair<T> operator -(ValuePair<T> vp, Action<T,T> handler) { vp.RemoveListener(handler); return vp; }
     
     public static ValuePair<T> operator +(ValuePair<T> vp, Action handler) { vp.AddListener(handler); return vp; }
     public static ValuePair<T> operator -(ValuePair<T> vp, Action handler) { vp.RemoveListener(handler); return vp; }

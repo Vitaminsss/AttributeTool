@@ -13,7 +13,7 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     private bool _dirty;  // 标记是否需要重新计算
     private bool _disposed; // 标记是否已被释放
     
-    private SafeEvent<(double Old, double New)> _valueChangedEvent;
+    private SafeEvent<(T Old, T New)> _valueChangedEvent;
     private SafeEvent _dirtyEvent;
     
     // TODO: 改成适配SafeEvent更加安全
@@ -34,7 +34,7 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
             _dirtyEvent?.Invoke();
 
             if (!EqualityComparer<T>.Default.Equals(oldValue, _cached)) 
-                Invoke(Convert.ToDouble(oldValue), Convert.ToDouble(_cached)); // 调用属性变化方法
+                Invoke(oldValue, _cached); // 调用属性变化方法
         
             return _cached;
         }
@@ -68,15 +68,15 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     /// <summary>
     /// 添加数值变化监听事件
     /// </summary>
-    public void AddListener(Action<double, double> handler)
+    public void AddListener(Action<T, T> handler)
     {
-        _valueChangedEvent ??= new SafeEvent<(double Old, double New)>();
+        _valueChangedEvent ??= new SafeEvent<(T Old, T New)>();
         _valueChangedEvent.Add(x => handler(x.Old, x.New));
     }
     /// <summary>
     /// 移除数值变化监听事件
     /// </summary>
-    public void RemoveListener(Action<double, double> handler) =>
+    public void RemoveListener(Action<T, T> handler) =>
         _valueChangedEvent.Remove(x => handler(x.Old, x.New));
     
     public void AddListener(Action handler)
@@ -88,8 +88,8 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     public void RemoveListener(Action handler) =>
         _dirtyEvent.Remove(handler);
 
-    public static ModValue<T> operator +(ModValue<T> vp, Action<double, double> handler) { vp.AddListener(handler); return vp; }
-    public static ModValue<T> operator -(ModValue<T> vp, Action<double, double> handler) { vp.RemoveListener(handler); return vp; }
+    public static ModValue<T> operator +(ModValue<T> vp, Action<T, T> handler) { vp.AddListener(handler); return vp; }
+    public static ModValue<T> operator -(ModValue<T> vp, Action<T, T> handler) { vp.RemoveListener(handler); return vp; }
     
     /// <summary>
     /// 添加修饰符组
@@ -174,7 +174,7 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
 
 
     // 事件触发逻辑 // BUG: 这里会不知为何多次Invoke所以有空要修
-    private void Invoke(double oldVal, double newVal)
+    private void Invoke(T oldVal, T newVal)
     {
         _valueChangedEvent?.Invoke((oldVal, newVal)); 
         OnDirty?.Invoke();
