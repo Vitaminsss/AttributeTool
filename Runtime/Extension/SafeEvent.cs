@@ -30,16 +30,15 @@ public sealed class SafeEvent<T> : IDisposable
 
     public void Dispose()
     { lock (_lock) _actions.Clear(); }
-
-    /* 语法糖 */
-    public static SafeEvent<T> operator +(SafeEvent<T> e, Action<T> h) { e.Add(h); return e; }
-    public static SafeEvent<T> operator -(SafeEvent<T> e, Action<T> h) { e.Remove(h); return e; }
 }
 
 public sealed class SafeEvent : IDisposable
 {
+    /* ======================================== */
     private readonly object _lock = new();
     private readonly HashSet<Action> _actions = new();
+    /* ======================================== */
+
     public void Add(Action handler)
     {
         if (handler == null) throw new ArgumentNullException(nameof(handler));
@@ -50,6 +49,7 @@ public sealed class SafeEvent : IDisposable
         if (handler == null) throw new ArgumentNullException(nameof(handler));
         lock (_lock) _actions.Remove(handler);
     }
+    
     public void Invoke()
     {
         Action[] snapshot;
@@ -59,17 +59,5 @@ public sealed class SafeEvent : IDisposable
     public void Dispose()
     {
         lock (_lock) _actions.Clear();
-    }
-    /* 语法糖 */
-    public static SafeEvent operator +(SafeEvent e, Action h) 
-    { 
-        e.Add(h); 
-        return e; 
-    }
-    
-    public static SafeEvent operator -(SafeEvent e, Action h) 
-    { 
-        e.Remove(h); 
-        return e; 
     }
 }
