@@ -212,15 +212,15 @@ public sealed class ValuePair<T> : IReadOnlyValuePair,IDescriptionR,IDirtyNotifi
     /// <summary>
     /// 监听 Current 值的变化。支持 lambda/方法组；
     /// </summary>
-    public void AddListener(Action<T,T> handler) => _valueChangedEvent.Add(h => handler(h.Old, h.New));
+    public void AddListener(Action<T,T> handler,int  priority = int.MaxValue) => _valueChangedEvent.Add(h => handler(h.Old, h.New),priority);
  
     /// <summary>
     /// 移除监听 —— Lambada函数无法被移除
     /// </summary>
     public void RemoveListener(Action<T,T> handler) => _valueChangedEvent.Remove(h => handler(h.Old, h.New));
     
-    public void AddListener(Action handler) =>
-        _dirtyEvent.Add(handler);
+    public void AddListener(Action handler,int  priority = int.MaxValue) =>
+        _dirtyEvent.Add(handler,priority);
     public void RemoveListener(Action handler) =>
         _dirtyEvent.Remove(handler);
 

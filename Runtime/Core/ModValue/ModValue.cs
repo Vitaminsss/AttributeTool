@@ -68,10 +68,10 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     /// <summary>
     /// 添加数值变化监听事件
     /// </summary>
-    public void AddListener(Action<T, T> handler)
+    public void AddListener(Action<T, T> handler,int  priority = int.MaxValue)
     {
         _valueChangedEvent ??= new SafeEvent<(T Old, T New)>();
-        _valueChangedEvent.Add(x => handler(x.Old, x.New));
+        _valueChangedEvent.Add(x => handler(x.Old, x.New),priority);
     }
     /// <summary>
     /// 移除数值变化监听事件
@@ -79,10 +79,10 @@ public sealed class ModValue<T>:IModValue,IDescriptionR, IDirtyNotifiable,IDispo
     public void RemoveListener(Action<T, T> handler) =>
         _valueChangedEvent.Remove(x => handler(x.Old, x.New));
     
-    public void AddListener(Action handler)
+    public void AddListener(Action handler,int  priority = int.MaxValue)
     {
         _dirtyEvent ??= new SafeEvent();
-        _dirtyEvent.Add(handler);
+        _dirtyEvent.Add(handler,priority);
     }
 
     public void RemoveListener(Action handler) =>
