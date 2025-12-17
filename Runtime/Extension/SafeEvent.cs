@@ -47,6 +47,9 @@ public sealed class SafeEvent<T> : IDisposable
 
     public void Dispose()
     { lock (_lock) _actions.Clear(); }
+    
+    public static SafeEvent<T> operator +(SafeEvent<T> e, Action<T> h) { e.Add(h); return e; }
+    public static SafeEvent<T> operator -(SafeEvent<T> e, Action<T> h) { e.Remove(h); return e; }
 }
 
 public sealed class SafeEvent : IDisposable
@@ -88,4 +91,7 @@ public sealed class SafeEvent : IDisposable
     }
 
     public void Dispose() { lock (_lock) _actions.Clear(); }
+    
+    public static SafeEvent operator +(SafeEvent e, Action h) { e.Add(h); return e; }
+    public static SafeEvent operator -(SafeEvent e, Action h) { e.Remove(h); return e; }
 }
